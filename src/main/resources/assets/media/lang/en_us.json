@@ -1,0 +1,23 @@
+{
+  "ui.media.welcome": "Welcome to Spotify controller setup",
+  "ui.media.welcome.subtext1": "This link will guide you through the",
+  "ui.media.welcome.subtext2": "process of setting up your Spotify controller.",
+
+  "ui.media.nothing_playing": "Nothing playing",
+  "ui.media.unknown_artist": "Unknown artist",
+
+  "ui.media.unknown_time": "00:00",
+  "ui.media.unknown_duration": "00:00",
+
+  "ui.media.reset_config": "Reset configuration / connection",
+  "ui.media.reset_config_confirm": "Are you sure you want to reset?",
+  "ui.media.reset_config_success": "Configuration reset successfully",
+
+  "ui.media.status.not_setup": "Not set up",
+  "ui.media.status.setup": "Linked with: %1$s",
+
+  "key.media.general": "Open Config / Controller",
+
+  "modmenu.nameTranslation.media": "Spotify Controller",
+  "modmenu.descriptionTranslation.media": "Control Spotify in-game"
+}
