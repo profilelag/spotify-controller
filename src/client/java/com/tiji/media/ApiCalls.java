@@ -16,14 +16,15 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://accounts.spotify.com/api/token?grant_type=authorization_code&redirect_uri=http://localhost:25566/callback&code=" + accessToken))
-                .timeout(java.time.Duration.ofSeconds(2))
+                .timeout(java.time.Duration.ofSeconds(10))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Authorization", getAuthorizationHeader())
                 .POST(HttpRequest.BodyPublishers.noBody()).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
                 .thenAccept(body -> {
-                    JsonObject data = new Gson().fromJson(body, JsonObject.class);
+                    JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
+
+                    if (!data.get("scope").getAsString().equals("user-read-playback-state user-modify-playback-state user-read-currently-playing")) return; // Authorization is modified
 
                     MediaClient.CONFIG.authToken(data.get("access_token").getAsString());
                     MediaClient.CONFIG.refreshToken(data.get("refresh_token").getAsString());
@@ -34,7 +35,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=" + MediaClient.CONFIG.refreshToken()))
-               .timeout(java.time.Duration.ofSeconds(2))
+               .timeout(java.time.Duration.ofSeconds(10))
                .header("Content-Type", "application/x-www-form-urlencoded")
                .header("Authorization", getAuthorizationHeader())
                .POST(HttpRequest.BodyPublishers.noBody()).build();
@@ -64,7 +65,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.spotify.com/v1/me/player"))
-                .timeout(Duration.ofSeconds(2))
+                .timeout(Duration.ofSeconds(10))
                 .header("Authorization", getAuthorizationCode())
                 .GET().build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -76,7 +77,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://api.spotify.com/v1/me/player/seek?position_ms=" + position_ms))
-               .timeout(Duration.ofSeconds(2))
+               .timeout(Duration.ofSeconds(10))
                .header("Authorization", getAuthorizationCode())
                .header("Content-Type", "application/json")
                .PUT(HttpRequest.BodyPublishers.noBody())
@@ -98,7 +99,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
-                .timeout(Duration.ofSeconds(2))
+                .timeout(Duration.ofSeconds(10))
                 .header("Authorization", getAuthorizationCode())
                 .PUT(HttpRequest.BodyPublishers.noBody()).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -110,7 +111,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://api.spotify.com/v1/me/player/next"))
-               .timeout(Duration.ofSeconds(2))
+               .timeout(Duration.ofSeconds(10))
                .header("Authorization", getAuthorizationCode())
                .POST(HttpRequest.BodyPublishers.noBody()).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -124,7 +125,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://api.spotify.com/v1/me/player/previous"))
-               .timeout(Duration.ofSeconds(2))
+               .timeout(Duration.ofSeconds(10))
                .header("Authorization", getAuthorizationCode())
                .POST(HttpRequest.BodyPublishers.noBody()).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -138,7 +139,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://api.spotify.com/v1/me/player/repeat"))
-               .timeout(Duration.ofSeconds(2))
+               .timeout(Duration.ofSeconds(10))
                .header("Authorization", getAuthorizationCode())
                .header("Content-Type", "application/json")
                .PUT(HttpRequest.BodyPublishers.ofString("{\"state\": \"" + state + "\", \"context_uri\": null}"))
@@ -152,7 +153,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://api.spotify.com/v1/me/player/shuffle"))
-               .timeout(Duration.ofSeconds(2))
+               .timeout(Duration.ofSeconds(10))
                .header("Authorization", getAuthorizationCode())
                .header("Content-Type", "application/json")
                .PUT(HttpRequest.BodyPublishers.ofString("{\"state\": " + state + "}"))
@@ -166,7 +167,7 @@ public class ApiCalls {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                .uri(URI.create("https://api.spotify.com/v1/me"))
-               .timeout(Duration.ofSeconds(2))
+               .timeout(Duration.ofSeconds(10))
                .header("Authorization", getAuthorizationCode())
                .GET().build();
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
