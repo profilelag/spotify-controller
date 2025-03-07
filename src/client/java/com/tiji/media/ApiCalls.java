@@ -9,19 +9,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class ApiCalls {
     public static void convertAccessToken(String accessToken) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://accounts.spotify.com/api/token?grant_type=authorization_code&redirect_uri=http://localhost:25566/callback&code=" + accessToken))
-                .timeout(java.time.Duration.ofSeconds(10))
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", getAuthorizationHeader())
-                .POST(HttpRequest.BodyPublishers.noBody()).build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenAccept(body -> {
+        call("accounts.spotify.com/api/token?grant_type=authorization_code&redirect_uri=http://localhost:25566/callback&code=" + accessToken,
+                getAuthorizationHeader(),
+                "application/x-www-form-urlencoded",
+                body -> {
                     JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
 
                     if (!data.get("scope").getAsString().equals("user-read-playback-state user-modify-playback-state user-read-currently-playing")) return; // Authorization is modified
@@ -29,20 +24,14 @@ public class ApiCalls {
                     MediaClient.CONFIG.authToken(data.get("access_token").getAsString());
                     MediaClient.CONFIG.refreshToken(data.get("refresh_token").getAsString());
                     MediaClient.CONFIG.lastRefresh(System.currentTimeMillis());
-                }).join();
+                });
     }
     public static void refreshAccessToken() {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=" + MediaClient.CONFIG.refreshToken()))
-               .timeout(java.time.Duration.ofSeconds(10))
-               .header("Content-Type", "application/x-www-form-urlencoded")
-               .header("Authorization", getAuthorizationHeader())
-               .POST(HttpRequest.BodyPublishers.noBody()).build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenApply(HttpResponse::body)
-                .thenAccept(body -> {
-                    JsonObject data = new Gson().fromJson(body, JsonObject.class);
+        call("https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=" + MediaClient.CONFIG.refreshToken(),
+                getAuthorizationHeader(),
+                "application/x-www-form-urlencoded",
+                body -> {
+                    JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
 
                     if (data.has("error")) {
                         Media.LOGGER.warn("Failed to refresh access token; Normally caused when developer app is deleted.");
@@ -58,121 +47,54 @@ public class ApiCalls {
                     MediaClient.CONFIG.authToken(data.get("access_token").getAsString());
                     if (data.has("refresh_token")) MediaClient.CONFIG.refreshToken(data.get("refresh_token").getAsString());
                     MediaClient.CONFIG.lastRefresh(System.currentTimeMillis());
-                }).join();
+                });
     }
-    public static JsonObject getNowPlayingTrack() {
-        AtomicReference<JsonObject> returns = new AtomicReference<>();
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.spotify.com/v1/me/player"))
-                .timeout(Duration.ofSeconds(10))
-                .header("Authorization", getAuthorizationCode())
-                .GET().build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenApply(HttpResponse::body)
-                .thenAccept(body -> returns.set(new Gson().fromJson(body, JsonObject.class))).join();
-        return returns.get();
+    public static void getNowPlayingTrack(Consumer<JsonObject> callback) {
+        call("https://api.spotify.com/v1/me/player",
+                getAuthorizationCode(),
+                null,
+                body -> callback.accept(new Gson().fromJson(body.toString(), JsonObject.class))
+        );
     }
     public static void setPlaybackLoc(int position_ms) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://api.spotify.com/v1/me/player/seek?position_ms=" + position_ms))
-               .timeout(Duration.ofSeconds(10))
-               .header("Authorization", getAuthorizationCode())
-               .header("Content-Type", "application/json")
-               .PUT(HttpRequest.BodyPublishers.noBody())
-               .build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenAccept(body -> {
-                   if (body.statusCode()!= 204 && body.statusCode()!= 200) {
-                       Media.LOGGER.warn("Failed to set playback location.");
-                   }
-                }).join();
+        call("https://api.spotify.com/v1/me/player/seek?position_ms=" + position_ms,
+                getAuthorizationCode(),
+                null,
+                body -> {}
+        );
     }
     public static void playPause(boolean state) {
-        URI uri;
+        String uri;
         if (state) {
-            uri = URI.create("https://api.spotify.com/v1/me/player/play");
+            uri = "https://api.spotify.com/v1/me/player/play";
         }else {
-            uri = URI.create("https://api.spotify.com/v1/me/player/pause");
+            uri = "https://api.spotify.com/v1/me/player/pause";
         }
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .timeout(Duration.ofSeconds(10))
-                .header("Authorization", getAuthorizationCode())
-                .PUT(HttpRequest.BodyPublishers.noBody()).build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenAccept(body -> {
-                    // TODO
-                }).join();
+        call(uri, getAuthorizationCode(), null, body -> {});
     }
     public static void nextTrack() {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://api.spotify.com/v1/me/player/next"))
-               .timeout(Duration.ofSeconds(10))
-               .header("Authorization", getAuthorizationCode())
-               .POST(HttpRequest.BodyPublishers.noBody()).build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenAccept(body -> {
-                    if (body.statusCode() != 204 && body.statusCode() != 200) {
-                        Media.LOGGER.warn("Failed to play next track: " + body);
-                    }
-                }).join();
+        call("https://api.spotify.com/v1/me/player/next", getAuthorizationCode(), null, body -> {});
     }
     public static void previousTrack() {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://api.spotify.com/v1/me/player/previous"))
-               .timeout(Duration.ofSeconds(10))
-               .header("Authorization", getAuthorizationCode())
-               .POST(HttpRequest.BodyPublishers.noBody()).build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenAccept(body -> {
-                   if (body.statusCode() != 204 && body.statusCode() != 200) {
-                       Media.LOGGER.warn("Failed to play previous track: " + body);
-                   }
-                }).join();
+        call("https://api.spotify.com/v1/me/player/previous", getAuthorizationCode(), null, body -> {});
     }
-    public static void setRepeatMode(String state) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://api.spotify.com/v1/me/player/repeat"))
-               .timeout(Duration.ofSeconds(10))
-               .header("Authorization", getAuthorizationCode())
-               .header("Content-Type", "application/json")
-               .PUT(HttpRequest.BodyPublishers.ofString("{\"state\": \"" + state + "\", \"context_uri\": null}"))
-               .build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenAccept(body -> {
-                    // TODO
-                }).join();
+    public static void getUserName(Consumer<String> consumer) {
+        call("https://api.spotify.com/v1/me", getAuthorizationCode(), null, body -> {
+            String name = new Gson().fromJson(body.toString(), JsonObject.class).get("display_name").getAsString();
+            consumer.accept(name);
+        });
     }
-    public static void setShuffle(boolean state) {
+    private static void call(String endpoint, String Authorization, String ContentType, Consumer<HttpResponse<String>> consumer) {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://api.spotify.com/v1/me/player/shuffle"))
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+               .uri(URI.create(endpoint))
                .timeout(Duration.ofSeconds(10))
-               .header("Authorization", getAuthorizationCode())
-               .header("Content-Type", "application/json")
-               .PUT(HttpRequest.BodyPublishers.ofString("{\"state\": " + state + "}"))
-               .build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenAccept(body -> {
-                    // TODO
-                }).join();
-    }
-    public static String getUserName() {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-               .uri(URI.create("https://api.spotify.com/v1/me"))
-               .timeout(Duration.ofSeconds(10))
-               .header("Authorization", getAuthorizationCode())
-               .GET().build();
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-               .thenApply(HttpResponse::body)
-               .thenApply(body -> new Gson().fromJson(body, JsonObject.class).get("display_name").getAsString())
+               .header("Authorization", Authorization)
+               .header("Content-Type", ContentType);
+        if (ContentType != null) request.header("Content-Type", ContentType);
+
+        client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
+               .thenAccept(consumer)
                .join();
     }
     private static String getAuthorizationHeader() {
