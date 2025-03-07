@@ -89,8 +89,7 @@ public class ApiCalls {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                .uri(URI.create(endpoint))
                .timeout(Duration.ofSeconds(10))
-               .header("Authorization", Authorization)
-               .header("Content-Type", ContentType);
+               .header("Authorization", Authorization);
         if (ContentType != null) request.header("Content-Type", ContentType);
 
         client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
