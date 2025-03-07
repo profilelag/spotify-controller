@@ -107,9 +107,7 @@ public class SongDataExtractor {
         return trackObj.getAsJsonObject("item").get("duration_ms").getAsInt();
     }
     public static void reloadData(boolean forceFullReload, Consumer<JsonObject> onNoUpdate, Consumer<JsonObject> onDataUpdate, Runnable onImageLoad) {
-        CompletableFuture<JsonObject> future = CompletableFuture.supplyAsync(ApiCalls::getNowPlayingTrack);
-
-        future.thenAccept(data -> {
+        ApiCalls.getNowPlayingTrack(data -> {
             boolean isSongDifferent = !getId(data).equals(SongData.Id);
 
             SongData.progressLabel = getProgressLabel(data);
