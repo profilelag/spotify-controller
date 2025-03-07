@@ -16,6 +16,8 @@
   "ui.media.status.not_setup": "Not set up",
   "ui.media.status.setup": "Linked with: %1$s",
 
+  "ui.media.loading": "Loading...",
+
   "key.media.general": "Open Config / Controller",
 
   "modmenu.nameTranslation.media": "Spotify Controller",
