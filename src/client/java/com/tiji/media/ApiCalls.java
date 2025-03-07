@@ -94,8 +94,7 @@ public class ApiCalls {
         if (ContentType != null) request.header("Content-Type", ContentType);
 
         client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
-               .thenAccept(consumer)
-               .join();
+               .thenAccept(consumer);
     }
     private static String getAuthorizationHeader() {
         String clientId = MediaClient.CONFIG.clientId();
