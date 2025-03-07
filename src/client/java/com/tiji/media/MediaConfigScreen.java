@@ -23,11 +23,15 @@ public abstract class MediaConfigScreen extends LightweightGuiDescription {
         if (MediaClient.isNotSetup()) {
             statusText = Text.translatable("ui.media.status.not_setup");
         }else{
-            statusText = Text.translatable("ui.media.status.setup", ApiCalls.getUserName());
+            statusText = Text.translatable("ui.media.status.setup", Text.translatable("ui.media.loading"));
         }
         
         WLabel status = new WLabel(statusText);
         root.add(status, 10, 10, 180, 20);
+
+        ApiCalls.getUserName((name) -> {
+            status.setText(Text.translatable("ui.media.status.setup", name));
+        });
 
         WButton reset = new WButton(Text.translatable("ui.media.reset_config"));
         reset.setOnClick(() -> {
