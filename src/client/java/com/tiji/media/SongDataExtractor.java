@@ -29,7 +29,7 @@ public class SongDataExtractor {
         return artists.toString();
     }
     public static String getId(JsonObject trackObj) {
-        return trackObj.getAsJsonObject("item").getAsJsonObject("album").get("id").getAsString().toLowerCase();
+        return trackObj.getAsJsonObject("item").get("id").getAsString().toLowerCase();
     }
     public static Identifier getAlbumCover(JsonObject trackObj) {
         try {
