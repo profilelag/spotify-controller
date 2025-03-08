@@ -17,24 +17,24 @@ public class ApiCalls {
                 getAuthorizationHeader(),
                 "application/x-www-form-urlencoded",
                 body -> {
-                    JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
+                    JsonObject data = new Gson().fromJson(body.body(), JsonObject.class);
 
-                    if (!data.get("scope").getAsString().equals("user-read-playback-state user-modify-playback-state user-read-currently-playing")) return; // Authorization is modified
+                    if (!data.get("scope").getAsString().equals("user-modify-playback-state user-read-playback-state user-read-currently-playing")) return; // Authorization is modified
 
                     MediaClient.CONFIG.authToken(data.get("access_token").getAsString());
                     MediaClient.CONFIG.refreshToken(data.get("refresh_token").getAsString());
                     MediaClient.CONFIG.lastRefresh(System.currentTimeMillis());
-                });
+                }, "POST");
     }
     public static void refreshAccessToken() {
         call("https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=" + MediaClient.CONFIG.refreshToken(),
                 getAuthorizationHeader(),
                 "application/x-www-form-urlencoded",
                 body -> {
-                    JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
+                    JsonObject data = new Gson().fromJson(body.body(), JsonObject.class);
 
                     if (data.has("error")) {
-                        Media.LOGGER.warn("Failed to refresh access token; Normally caused when developer app is deleted.");
+                        Media.LOGGER.warn("Failed to refresh access token; Normally caused when developer app is deleted. {}: {}", data.get("error"), data.get("error_description"));
                         MediaClient.CONFIG.reset();
                         try {
                             WebGuideServer.start();
@@ -47,20 +47,22 @@ public class ApiCalls {
                     MediaClient.CONFIG.authToken(data.get("access_token").getAsString());
                     if (data.has("refresh_token")) MediaClient.CONFIG.refreshToken(data.get("refresh_token").getAsString());
                     MediaClient.CONFIG.lastRefresh(System.currentTimeMillis());
-                });
+                }, "POST");
     }
     public static void getNowPlayingTrack(Consumer<JsonObject> callback) {
         call("https://api.spotify.com/v1/me/player",
                 getAuthorizationCode(),
                 null,
-                body -> callback.accept(new Gson().fromJson(body.toString(), JsonObject.class))
+                body -> callback.accept(new Gson().fromJson(body.body(), JsonObject.class)),
+                "GET"
         );
     }
     public static void setPlaybackLoc(int position_ms) {
         call("https://api.spotify.com/v1/me/player/seek?position_ms=" + position_ms,
                 getAuthorizationCode(),
                 null,
-                body -> {}
+                body -> {},
+                "PUT"
         );
     }
     public static void playPause(boolean state) {
@@ -70,21 +72,21 @@ public class ApiCalls {
         }else {
             uri = "https://api.spotify.com/v1/me/player/pause";
         }
-        call(uri, getAuthorizationCode(), null, body -> {});
+        call(uri, getAuthorizationCode(), null, body -> {}, "PUT");
     }
     public static void nextTrack() {
-        call("https://api.spotify.com/v1/me/player/next", getAuthorizationCode(), null, body -> {});
+        call("https://api.spotify.com/v1/me/player/next", getAuthorizationCode(), null, body -> {}, "POST");
     }
     public static void previousTrack() {
-        call("https://api.spotify.com/v1/me/player/previous", getAuthorizationCode(), null, body -> {});
+        call("https://api.spotify.com/v1/me/player/previous", getAuthorizationCode(), null, body -> {}, "POST");
     }
     public static void getUserName(Consumer<String> consumer) {
         call("https://api.spotify.com/v1/me", getAuthorizationCode(), null, body -> {
-            String name = new Gson().fromJson(body.toString(), JsonObject.class).get("display_name").getAsString();
+            String name = new Gson().fromJson(body.body(), JsonObject.class).get("display_name").getAsString();
             consumer.accept(name);
-        });
+        }, "GET");
     }
-    private static void call(String endpoint, String Authorization, String ContentType, Consumer<HttpResponse<String>> consumer) {
+    private static void call(String endpoint, String Authorization, String ContentType, Consumer<HttpResponse<String>> consumer, String method) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder request = HttpRequest.newBuilder()
                .uri(URI.create(endpoint))
