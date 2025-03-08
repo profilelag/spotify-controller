@@ -1,5 +1,6 @@
 package com.tiji.media;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
@@ -36,23 +37,18 @@ public class SongDataExtractor {
             Identifier id = Identifier.of("media", getId(trackObj));
             int wantedSize = 100 * MinecraftClient.getInstance().options.getGuiScale().getValue();
             int closest = Integer.MAX_VALUE;
-            String closestUrl = trackObj.getAsJsonObject("item")
+            JsonArray images = trackObj.getAsJsonObject("item")
                     .getAsJsonObject("album")
-                    .getAsJsonArray("images").get(0)
+                    .getAsJsonArray("images");
+            String closestUrl = images.get(0)
                     .getAsJsonObject().get("url").getAsString();
 
-            for (int i = 0; i < trackObj.getAsJsonObject("item")
-                    .getAsJsonObject("album")
-                    .getAsJsonArray("images").size(); i++) {
-                int size = trackObj.getAsJsonObject("item")
-                        .getAsJsonObject("album")
-                        .getAsJsonArray("images").get(i)
+            for (int i = 0; i < images.size(); i++) {
+                int size = images.get(i)
                         .getAsJsonObject().get("height").getAsInt();
                 if (closest > size && size >= wantedSize) {
                     closest = size;
-                    closestUrl = trackObj.getAsJsonObject("item")
-                            .getAsJsonObject("album")
-                            .getAsJsonArray("images").get(i)
+                    closestUrl = images.get(i)
                             .getAsJsonObject().get("url").getAsString();
                 }
             }
