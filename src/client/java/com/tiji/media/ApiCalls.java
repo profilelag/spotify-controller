@@ -92,6 +92,13 @@ public class ApiCalls {
                .header("Authorization", Authorization);
         if (ContentType != null) request.header("Content-Type", ContentType);
 
+        request = switch (method) {
+            case "GET" -> request.GET();
+            case "POST" -> request.POST(HttpRequest.BodyPublishers.ofString(""));
+            case "PUT" -> request.PUT(HttpRequest.BodyPublishers.ofString(""));
+            default -> request;
+        };
+
         client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
                 .exceptionally(e -> {
                     Media.LOGGER.error("Failed to call API: {}", e.getMessage());
