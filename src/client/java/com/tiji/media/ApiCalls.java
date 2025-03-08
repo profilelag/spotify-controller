@@ -93,7 +93,11 @@ public class ApiCalls {
         if (ContentType != null) request.header("Content-Type", ContentType);
 
         client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
-               .thenAccept(consumer);
+               .thenAccept(consumer)
+                .exceptionally(e -> {
+                    Media.LOGGER.error("Failed to make API call: {}", e.getMessage());
+                    return null;
+                });
     }
     private static String getAuthorizationHeader() {
         String clientId = MediaClient.CONFIG.clientId();
