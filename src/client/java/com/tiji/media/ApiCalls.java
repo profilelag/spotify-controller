@@ -93,9 +93,13 @@ public class ApiCalls {
         if (ContentType != null) request.header("Content-Type", ContentType);
 
         client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
-               .thenAccept(consumer)
                 .exceptionally(e -> {
-                    Media.LOGGER.error("Failed to make API call: {}", e.getMessage());
+                    Media.LOGGER.error("Failed to call API: {}", e.getMessage());
+                    return null;
+                })
+                .thenAccept(consumer)
+                .exceptionally(e -> {
+                    Media.LOGGER.error("Failed to handle response: {}", e.getMessage());
                     return null;
                 });
     }
