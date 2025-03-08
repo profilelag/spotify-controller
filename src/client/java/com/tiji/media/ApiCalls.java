@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public class ApiCalls {
     public static void convertAccessToken(String accessToken) {
-        call("accounts.spotify.com/api/token?grant_type=authorization_code&redirect_uri=http://localhost:25566/callback&code=" + accessToken,
+        call("https://accounts.spotify.com/api/token?grant_type=authorization_code&redirect_uri=http://localhost:25566/callback&code=" + accessToken,
                 getAuthorizationHeader(),
                 "application/x-www-form-urlencoded",
                 body -> {
