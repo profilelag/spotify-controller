@@ -97,10 +97,13 @@ public class ApiCalls {
                     Media.LOGGER.error("Failed to call API: {}", e.getMessage());
                     return null;
                 })
-                .thenAccept(consumer)
-                .exceptionally(e -> {
-                    Media.LOGGER.error("Failed to handle response: {}", e.getMessage());
-                    return null;
+                .thenAccept(stringHttpResponse -> {
+                    try{
+                        consumer.accept(stringHttpResponse);
+                    }catch (Exception e){
+                        Media.LOGGER.error("Failed to consume API response: ");
+                        e.printStackTrace();
+                    }
                 });
     }
     private static String getAuthorizationHeader() {
