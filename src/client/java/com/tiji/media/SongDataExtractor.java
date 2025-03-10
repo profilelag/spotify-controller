@@ -13,11 +13,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class SongDataExtractor {
-    private static List<Identifier> loadedCover = List.of();
+    private static final ArrayList<Identifier> loadedCover = new ArrayList<>();
 
     public static String getName(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("name").getAsString();
