@@ -33,6 +33,7 @@ public class SongDataExtractor {
     public static String getId(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("id").getAsString().toLowerCase();
     }
+    @SuppressWarnings("deprecation") // It will be re-visited
     public static Identifier getAlbumCover(JsonObject trackObj) {
         try {
             Identifier id = Identifier.of("media", getId(trackObj));
