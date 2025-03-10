@@ -17,7 +17,7 @@ public class ApiCalls {
                 getAuthorizationHeader(),
                 "application/x-www-form-urlencoded",
                 body -> {
-                    JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
+                    JsonObject data = new Gson().fromJson(body.body(), JsonObject.class);
 
                     if (!data.get("scope").getAsString().equals("user-read-playback-state user-modify-playback-state user-read-currently-playing")) return; // Authorization is modified
 
@@ -31,7 +31,7 @@ public class ApiCalls {
                 getAuthorizationHeader(),
                 "application/x-www-form-urlencoded",
                 body -> {
-                    JsonObject data = new Gson().fromJson(body.toString(), JsonObject.class);
+                    JsonObject data = new Gson().fromJson(body.body(), JsonObject.class);
 
                     if (data.has("error")) {
                         Media.LOGGER.warn("Failed to refresh access token; Normally caused when developer app is deleted.");
@@ -53,7 +53,7 @@ public class ApiCalls {
         call("https://api.spotify.com/v1/me/player",
                 getAuthorizationCode(),
                 null,
-                body -> callback.accept(new Gson().fromJson(body.toString(), JsonObject.class))
+                body -> callback.accept(new Gson().fromJson(body.body(), JsonObject.class))
         );
     }
     public static void setPlaybackLoc(int position_ms) {
@@ -80,7 +80,7 @@ public class ApiCalls {
     }
     public static void getUserName(Consumer<String> consumer) {
         call("https://api.spotify.com/v1/me", getAuthorizationCode(), null, body -> {
-            String name = new Gson().fromJson(body.toString(), JsonObject.class).get("display_name").getAsString();
+            String name = new Gson().fromJson(body.body(), JsonObject.class).get("display_name").getAsString();
             consumer.accept(name);
         });
     }
