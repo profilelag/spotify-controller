@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class SongDataExtractor {
+    private static Integer imageWidth = 100;
+    private static Integer imageHeight = 100;
+
     public static String getName(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("name").getAsString();
     }
@@ -56,6 +58,8 @@ public class SongDataExtractor {
                             .getAsJsonObject().get("url").getAsString();
                 }
             }
+            imageHeight = closest;
+            imageWidth = closest;
             InputStream albumCoverUrl = new URL(closestUrl).openStream();
 
             // Spotify provides JPEG image that Minecraft cannot handle
@@ -106,7 +110,7 @@ public class SongDataExtractor {
     public static int getMaxDuration(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("duration_ms").getAsInt();
     }
-    public static void reloadData(boolean forceFullReload, Consumer<JsonObject> onNoUpdate, Consumer<JsonObject> onDataUpdate, Runnable onImageLoad) {
+    public static void reloadData(boolean forceFullReload, Runnable onNoUpdate, Runnable onDataUpdate, Runnable onImageLoad) {
         ApiCalls.getNowPlayingTrack(data -> {
             boolean isSongDifferent = !getId(data).equals(SongData.Id);
 
@@ -122,7 +126,7 @@ public class SongDataExtractor {
                 SongData.duration = getMaxDuration(data);
 
                 if (!SongData.coverImage.getPath().equals("ui/nothing.png")) {
-                    MinecraftClient.getInstance().getTextureManager().destroyTexture(SongData.coverImage);
+                    //MinecraftClient.getInstance().getTextureManager().destroyTexture(SongData.coverImage);        //Deleted line as they are used on toasts. Will be re-visited
                     SongData.coverImage = Identifier.of("media", "ui/nothing.png");
                 }
                 CompletableFuture<Identifier> ImageIOFuture = CompletableFuture.supplyAsync(() -> getAlbumCover(data));
@@ -132,9 +136,9 @@ public class SongDataExtractor {
                 });
             }
             if (isSongDifferent || forceFullReload) {
-                onDataUpdate.accept(data);
+                onDataUpdate.run();
             }else{
-                onNoUpdate.accept(data);
+                onNoUpdate.run();
             }
         });
     }
