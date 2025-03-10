@@ -13,11 +13,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class SongDataExtractor {
-    private static Integer imageWidth = 100;
-    private static Integer imageHeight = 100;
+    private static List<Identifier> loadedCover = List.of();
 
     public static String getName(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("name").getAsString();
@@ -36,6 +36,13 @@ public class SongDataExtractor {
     public static Identifier getAlbumCover(JsonObject trackObj) {
         try {
             Identifier id = Identifier.of("media", getId(trackObj));
+
+            if (loadedCover.contains(id)) {
+                return id;
+            } else{
+                loadedCover.add(id);
+            }
+
             int wantedSize = 100 * MinecraftClient.getInstance().options.getGuiScale().getValue();
             int closest = Integer.MAX_VALUE;
             String closestUrl = trackObj.getAsJsonObject("item")
@@ -58,8 +65,6 @@ public class SongDataExtractor {
                             .getAsJsonObject().get("url").getAsString();
                 }
             }
-            imageHeight = closest;
-            imageWidth = closest;
             InputStream albumCoverUrl = new URL(closestUrl).openStream();
 
             // Spotify provides JPEG image that Minecraft cannot handle
