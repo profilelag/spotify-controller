@@ -22,7 +22,7 @@ public class NowPlayingScreen extends LightweightGuiDescription {
     public progressWidget progressBar = new progressWidget(0, 100, Axis.HORIZONTAL);
     public WLabel durationLabel = new WLabel(Text.translatable("ui.media.unknown_duration"));
     public WLabel currentTimeLabel = new WLabel(Text.translatable("ui.media.unknown_time"));
-    public borderlessButton playPauseButton = new borderlessButton(Text.literal("⏸"));
+    public borderlessButtonWidget playPauseButton = new borderlessButtonWidget(Text.literal("⏸"));
     public WSprite albumCover = new WSprite(Identifier.of("media", "ui/nothing.png"));
 
     public NowPlayingScreen() {
@@ -38,7 +38,7 @@ public class NowPlayingScreen extends LightweightGuiDescription {
         artistName = artistName.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(artistName, 100, 135, 100, 20);
 
-        root.add(new borderlessButton(Text.literal("⏮")).setOnClick(ApiCalls::previousTrack), 120, 150, 20, 20);
+        root.add(new borderlessButtonWidget(Text.literal("⏮")).setOnClick(ApiCalls::previousTrack), 120, 150, 20, 20);
 
         playPauseButton.setOnClick(() -> {
             if (SongData.Id.isEmpty()) return;
@@ -49,7 +49,7 @@ public class NowPlayingScreen extends LightweightGuiDescription {
 
         root.add(playPauseButton, 140, 150, 20, 20);
 
-        root.add(new borderlessButton(Text.literal("⏭")).setOnClick(ApiCalls::nextTrack), 160, 150, 20, 20);
+        root.add(new borderlessButtonWidget(Text.literal("⏭")).setOnClick(ApiCalls::nextTrack), 160, 150, 20, 20);
 
         currentTimeLabel = currentTimeLabel.setHorizontalAlignment(HorizontalAlignment.LEFT);
         root.add(currentTimeLabel, 10, 160, 60, 20);

@@ -6,8 +6,8 @@ import io.github.cottonmc.cotton.gui.widget.WButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
-public class borderlessButton extends WButton {
-    public borderlessButton(Text text) {
+public class borderlessButtonWidget extends WButton {
+    public borderlessButtonWidget(Text text) {
         super(text);
     }
 
