@@ -40,7 +40,7 @@ public class progressWidget extends WSlider {
     @Override
     public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
         int background = shouldRenderInDarkMode() ? 0xFF555555 : 0xFFAAAAAA;
-        int foreground = shouldRenderInDarkMode() ? 0xFFFFFFFF : 0xFF000000;
+        int foreground = shouldRenderInDarkMode() ? 0xFFFFFFFF : 0xFF333333;
 
         context.fill(x, y, width + x, y + TRACK_WIDTH, background);
         context.fill(x, y, (int) (coordToValueRatio * (value - min)) + x, y + TRACK_WIDTH, foreground);
