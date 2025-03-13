@@ -15,7 +15,7 @@
 
   "ui.media.status.not_setup": "연결 되지 않음",
   "ui.media.status.setup": "%1$s와 연결됨",
-  "ui.media.loading": "Loading...",
+  "ui.media.loading": "로딩중...",
   "ui.media.premium_required.title": "프리미엄 필요",
   "ui.media.premium_required.message": "프리미엄이 필요합니다. 스포티파이의 의도됀 제한사항입니다",
   "key.media.general": "설정 / 제어판 열기",
