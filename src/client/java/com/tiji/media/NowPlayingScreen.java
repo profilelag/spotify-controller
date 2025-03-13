@@ -32,6 +32,8 @@ public class NowPlayingScreen extends LightweightGuiDescription {
 
         root.add(albumCover, 100, 10, 100, 100);
 
+        root.add(new WSprite(Identifier.of("media", "ui/attribution.png")), 270, 10);
+
         songName = songName.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(songName, 100, 120, 100, 20);
 
