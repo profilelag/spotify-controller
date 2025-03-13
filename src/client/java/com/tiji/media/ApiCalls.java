@@ -2,6 +2,9 @@ package com.tiji.media;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 import java.net.URI;
