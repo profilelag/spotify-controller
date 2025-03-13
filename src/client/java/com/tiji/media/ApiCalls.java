@@ -107,6 +107,16 @@ public class ApiCalls {
                     return null;
                 })
                 .thenAccept(stringHttpResponse -> {
+                    String body = stringHttpResponse.body();
+                    JsonObject data = new Gson().fromJson(body, JsonObject.class);
+
+                    if (data.has("reason")) {
+                        if (data.get("reason").getAsString().equals("PREMIUM_REQUIRED")){
+                            MinecraftClient.getInstance().getToastManager().add(
+                                    new SystemToast(new SystemToast.Type(), Text.translatable("ui.media.premium_required.title"), Text.translatable("ui.media.premium_required.message"))
+                            );
+                        }
+                    }
                     try{
                         consumer.accept(stringHttpResponse);
                     }catch (Exception e){
