@@ -28,8 +28,8 @@ public class MediaClient implements ClientModInitializer {
 				e.printStackTrace();
 			}
 		}else{
-			ApiCalls.refreshAccessToken();
 			SongDataExtractor.reloadData(true, () -> {}, () -> {}, () -> {});
+			ApiCalls.refreshAccessToken();
 		}
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			while (SETUP_KEY.wasPressed()) {
