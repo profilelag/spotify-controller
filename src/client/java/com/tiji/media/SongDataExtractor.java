@@ -116,6 +116,9 @@ public class SongDataExtractor {
     public static int getMaxDuration(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("duration_ms").getAsInt();
     }
+    public static boolean isExplicit(JsonObject trackObj) {
+        return trackObj.get("item").getAsJsonObject().get("explicit").getAsBoolean();
+    }
     public static void reloadData(boolean forceFullReload, Runnable onNoUpdate, Runnable onDataUpdate, Runnable onImageLoad) {
         ApiCalls.getNowPlayingTrack(data -> {
             boolean isSongDifferent = !getId(data).equals(SongData.Id);
@@ -125,7 +128,7 @@ public class SongDataExtractor {
             SongData.progressValue = getDuration(data);
 
             if (isSongDifferent || forceFullReload) {
-                SongData.title = getName(data);
+                SongData.title = (isExplicit(data) ? "(E) " : "") + getName(data);
                 SongData.artist = getArtist(data);
                 SongData.durationLabel = getDurationLabel(data);
                 SongData.Id = getId(data);
