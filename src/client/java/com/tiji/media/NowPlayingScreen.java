@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 import com.tiji.media.widgets.*;
 
 public class NowPlayingScreen extends LightweightGuiDescription {
-    private class RootPanel extends WPlainPanel {
+    private static class RootPanel extends WPlainPanel {
         public void onHidden() {
             MediaClient.nowPlayingScreen = null;
         }
