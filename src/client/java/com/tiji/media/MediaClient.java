@@ -49,8 +49,9 @@ public class MediaClient implements ClientModInitializer {
 				if (nowPlayingScreen != null) {
 					SongDataExtractor.reloadData(false, nowPlayingScreen::updateStatus, nowPlayingScreen::updateNowPlaying, () -> {
 						nowPlayingScreen.updateCoverImage();
-
-						new SongToast(SongData.coverImage, SongData.artist, SongData.title).show(MinecraftClient.getInstance().getToastManager());
+						if (CONFIG.shouldShowToasts()) {
+							new SongToast(SongData.coverImage, SongData.artist, SongData.title).show(MinecraftClient.getInstance().getToastManager());
+						}
 					});
 				}
 				if (CONFIG.lastRefresh() + 1.8e+6 < System.currentTimeMillis()) {

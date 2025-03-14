@@ -2,24 +2,20 @@
   "ui.media.welcome": "스포티파이 연결",
   "ui.media.welcome.subtext1": "이 링크가 스포티파이 연결을 도와드립니다",
   "ui.media.welcome.subtext2": "",
-
   "ui.media.nothing_playing": "아무 것도 재생하지 않음",
   "ui.media.unknown_artist": "알수 없음",
-
   "ui.media.unknown_time": "00:00",
   "ui.media.unknown_duration": "00:00",
-
   "ui.media.reset_config": "연결 초기화",
   "ui.media.reset_config_confirm": "진짜로 초기화 하시겠습니까?",
   "ui.media.reset_config_success": "초기화 성공적",
-
   "ui.media.status.not_setup": "연결 되지 않음",
   "ui.media.status.setup": "%1$s와 연결됨",
   "ui.media.loading": "로딩중...",
   "ui.media.premium_required.title": "프리미엄 필요",
   "ui.media.premium_required.message": "프리미엄이 필요합니다. 스포티파이의 의도됀 제한사항입니다",
+  "ui.media.show_toast": "다른 노래로 바뀔때 알림 받기",
   "key.media.general": "설정 / 제어판 열기",
-
   "modmenu.nameTranslation.media": "스포티파이 제어기",
   "modmenu.descriptionTranslation.media": "인게임에서 스포티파이 제어하기\n\n스포티파이는 Spotify AB의 트레이드 마크입니다. 이 프로그램은 스포티파이의 소유가 아니며 스포티파이와의 승인을 받지 않았습니다."
 }

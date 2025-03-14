@@ -4,6 +4,7 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
+import io.github.cottonmc.cotton.gui.widget.WToggleButton;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.minecraft.text.Text;
 
@@ -15,7 +16,7 @@ public abstract class MediaConfigScreen extends LightweightGuiDescription {
         AtomicBoolean confirmReset = new AtomicBoolean(false);
 
         WPlainPanel root = new WPlainPanel();
-        root.setSize(200, 80);
+        root.setSize(200, 100);
         root.setInsets(Insets.NONE);
         
         Text statusText;
@@ -52,6 +53,12 @@ public abstract class MediaConfigScreen extends LightweightGuiDescription {
             }
         });
         root.add(reset, 10, 40, 180, 20);
+
+        WToggleButton toastToggle = new WToggleButton(Text.translatable("ui.media.show_toast")).setOnToggle(
+                MediaClient.CONFIG::shouldShowToasts
+        );
+        toastToggle.setToggle(MediaClient.CONFIG.shouldShowToasts());
+        root.add(toastToggle, 10, 60, 180, 20);
 
         root.validate(this);
         setRootPanel(root);
