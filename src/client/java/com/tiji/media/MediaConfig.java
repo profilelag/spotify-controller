@@ -9,12 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class MediaConfig {
-    private static String clientId = "";
-    private static String clientSecret = "";
-    private static String accessToken = "";
-    private static String authToken = "";
-    private static String refreshToken = "";
-    private static long lastRefresh = 0;
+    private String clientId = "";
+    private String clientSecret = "";
+    private String accessToken = "";
+    private String authToken = "";
+    private String refreshToken = "";
+    private long lastRefresh = 0;
+    private boolean shouldShowToasts = true;
 
     public String clientId() {return clientId;}
     public void clientId(String value) {clientId = value; writeToFile();}
