@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import com.tiji.media.widgets.*;
+import net.minecraft.util.Util;
 
 public class NowPlayingScreen extends LightweightGuiDescription {
     private static class RootPanel extends WPlainPanel {
@@ -32,7 +33,10 @@ public class NowPlayingScreen extends LightweightGuiDescription {
 
         root.add(albumCover, 100, 10, 100, 100);
 
-        root.add(new WSprite(Identifier.of("media", "ui/attribution.png")), 270, 10);
+        root.add(new clickableSprite(Identifier.of("media", "ui/attribution.png")).setOnClick(() -> {
+            if (SongData.songURI == null) return;
+            Util.getOperatingSystem().open(SongData.songURI);
+        }), 270, 10);
 
         songName = songName.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(songName, 100, 120, 100, 20);

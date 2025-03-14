@@ -2,6 +2,8 @@ package com.tiji.media;
 
 import net.minecraft.util.Identifier;
 
+import java.net.URI;
+
 public class SongData {
     public static String title;
     public static String artist;
@@ -12,6 +14,7 @@ public class SongData {
     public static Integer duration;
     public static boolean isPlaying = false;
     public static String Id = "";
+    public static URI songURI;
 
     public static String tostring() {
         return "songData{" +
@@ -23,6 +26,7 @@ public class SongData {
                 ", progress_value=" + progressValue +
                 ", isPlaying=" + isPlaying +
                 ", Id='" + Id + '\'' +'"' +
+                ", songURI=" + songURI +
                 '}';
     }
 }

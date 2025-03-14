@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -32,6 +33,11 @@ public class SongDataExtractor {
     }
     public static String getId(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("id").getAsString().toLowerCase();
+    }
+    public static URI getSpotifyLink(JsonObject trackObj) {
+        return URI.create(
+                trackObj.getAsJsonObject("item").getAsJsonObject("external_urls").get("spotify").getAsString()
+        );
     }
     @SuppressWarnings("deprecation") // It will be re-visited
     public static Identifier getAlbumCover(JsonObject trackObj) {
@@ -133,6 +139,7 @@ public class SongDataExtractor {
                 SongData.durationLabel = getDurationLabel(data);
                 SongData.Id = getId(data);
                 SongData.duration = getMaxDuration(data);
+                SongData.songURI = getSpotifyLink(data);
 
                 if (!SongData.coverImage.getPath().equals("ui/nothing.png")) {
                     //MinecraftClient.getInstance().getTextureManager().destroyTexture(SongData.coverImage);        //Deleted line as they are used on toasts. Will be re-visited
