@@ -134,7 +134,7 @@ public class SongDataExtractor {
             SongData.progressValue = getDuration(data);
 
             if (isSongDifferent || forceFullReload) {
-                SongData.title = (isExplicit(data) ? "(E) " : "") + getName(data);
+                SongData.title = (isExplicit(data) ? "\uD83C\uDD74 " : "") + getName(data);
                 SongData.artist = getArtist(data);
                 SongData.durationLabel = getDurationLabel(data);
                 SongData.Id = getId(data);
