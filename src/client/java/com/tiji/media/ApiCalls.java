@@ -2,6 +2,9 @@ package com.tiji.media;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 import java.net.URI;
@@ -89,9 +92,9 @@ public class ApiCalls {
     private static void call(String endpoint, String Authorization, String ContentType, Consumer<HttpResponse<String>> consumer, String method) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder request = HttpRequest.newBuilder()
-               .uri(URI.create(endpoint))
-               .timeout(Duration.ofSeconds(10))
-               .header("Authorization", Authorization);
+                .uri(URI.create(endpoint))
+                .timeout(Duration.ofSeconds(10))
+                .header("Authorization", Authorization);
         if (ContentType != null) request.header("Content-Type", ContentType);
 
         request = switch (method) {
@@ -107,6 +110,16 @@ public class ApiCalls {
                     return null;
                 })
                 .thenAccept(stringHttpResponse -> {
+                    String body = stringHttpResponse.body();
+                    JsonObject data = new Gson().fromJson(body, JsonObject.class);
+
+                    if (data.has("reason")) {
+                        if (data.get("reason").getAsString().equals("PREMIUM_REQUIRED")){
+                            MinecraftClient.getInstance().getToastManager().add(
+                                    new SystemToast(new SystemToast.Type(), Text.translatable("ui.media.premium_required.title"), Text.translatable("ui.media.premium_required.message"))
+                            );
+                        }
+                    }
                     try{
                         consumer.accept(stringHttpResponse);
                     }catch (Exception e){

@@ -2,9 +2,12 @@ package com.tiji.media;
 
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.toast.ToastManager;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
@@ -26,23 +29,30 @@ public class MediaClient implements ClientModInitializer {
 				e.printStackTrace();
 			}
 		}else{
-			SongDataExtractor.reloadData(true, (data) -> {}, (data) -> {}, () -> {});
 			ApiCalls.refreshAccessToken();
 		}
+		ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
+			SongDataExtractor.reloadData(true, () -> {}, () -> {}, () -> {});
+		});
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			while (SETUP_KEY.wasPressed()) {
 				if (isNotSetup()) {
 					client.setScreen(new CottonClientScreen(new SetupScreen()));
 				}else{
 					nowPlayingScreen = new NowPlayingScreen();
+					nowPlayingScreen.updateCoverImage();
+					nowPlayingScreen.updateNowPlaying();
 					client.setScreen(new CottonClientScreen(nowPlayingScreen));
-
-					SongDataExtractor.reloadData(true, nowPlayingScreen::updateStatus, nowPlayingScreen::updateNowPlaying, nowPlayingScreen::updateCoverImage);
 				}
 			}
 			if (!isNotSetup() && tickCount % 10 == 0){
 				if (nowPlayingScreen != null) {
-					SongDataExtractor.reloadData(false, nowPlayingScreen::updateStatus, nowPlayingScreen::updateNowPlaying, nowPlayingScreen::updateCoverImage);
+					SongDataExtractor.reloadData(false, nowPlayingScreen::updateStatus, nowPlayingScreen::updateNowPlaying, () -> {
+						nowPlayingScreen.updateCoverImage();
+						if (CONFIG.shouldShowToasts()) {
+							new SongToast(SongData.coverImage, SongData.artist, SongData.title).show(MinecraftClient.getInstance().getToastManager());
+						}
+					});
 				}
 				if (CONFIG.lastRefresh() + 1.8e+6 < System.currentTimeMillis()) {
 					ApiCalls.refreshAccessToken();

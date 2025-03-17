@@ -13,11 +13,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class SongDataExtractor {
+    private static final ArrayList<Identifier> loadedCover = new ArrayList<>();
+
     public static String getName(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("name").getAsString();
     }
@@ -32,9 +35,22 @@ public class SongDataExtractor {
     public static String getId(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("id").getAsString().toLowerCase();
     }
+    public static URI getSpotifyLink(JsonObject trackObj) {
+        return URI.create(
+                trackObj.getAsJsonObject("item").getAsJsonObject("external_urls").get("spotify").getAsString()
+        );
+    }
+    @SuppressWarnings("deprecation") // It will be re-visited
     public static Identifier getAlbumCover(JsonObject trackObj) {
         try {
             Identifier id = Identifier.of("media", getId(trackObj));
+
+            if (loadedCover.contains(id)) {
+                return id;
+            } else{
+                loadedCover.add(id);
+            }
+
             int wantedSize = 100 * MinecraftClient.getInstance().options.getGuiScale().getValue();
             int closest = Integer.MAX_VALUE;
             JsonArray images = trackObj.getAsJsonObject("item")
@@ -102,7 +118,10 @@ public class SongDataExtractor {
     public static int getMaxDuration(JsonObject trackObj) {
         return trackObj.getAsJsonObject("item").get("duration_ms").getAsInt();
     }
-    public static void reloadData(boolean forceFullReload, Consumer<JsonObject> onNoUpdate, Consumer<JsonObject> onDataUpdate, Runnable onImageLoad) {
+    public static boolean isExplicit(JsonObject trackObj) {
+        return trackObj.get("item").getAsJsonObject().get("explicit").getAsBoolean();
+    }
+    public static void reloadData(boolean forceFullReload, Runnable onNoUpdate, Runnable onDataUpdate, Runnable onImageLoad) {
         ApiCalls.getNowPlayingTrack(data -> {
             boolean isSongDifferent = !getId(data).equals(SongData.Id);
 
@@ -111,14 +130,15 @@ public class SongDataExtractor {
             SongData.progressValue = getDuration(data);
 
             if (isSongDifferent || forceFullReload) {
-                SongData.title = getName(data);
+                SongData.title = (isExplicit(data) ? "\uD83C\uDD74 " : "") + getName(data);
                 SongData.artist = getArtist(data);
                 SongData.durationLabel = getDurationLabel(data);
                 SongData.Id = getId(data);
                 SongData.duration = getMaxDuration(data);
+                SongData.songURI = getSpotifyLink(data);
 
                 if (!SongData.coverImage.getPath().equals("ui/nothing.png")) {
-                    MinecraftClient.getInstance().getTextureManager().destroyTexture(SongData.coverImage);
+                    //MinecraftClient.getInstance().getTextureManager().destroyTexture(SongData.coverImage);        //Deleted line as they are used on toasts. Will be re-visited
                     SongData.coverImage = Identifier.of("media", "ui/nothing.png");
                 }
                 CompletableFuture<Identifier> ImageIOFuture = CompletableFuture.supplyAsync(() -> getAlbumCover(data));
@@ -128,9 +148,9 @@ public class SongDataExtractor {
                 });
             }
             if (isSongDifferent || forceFullReload) {
-                onDataUpdate.accept(data);
+                onDataUpdate.run();
             }else{
-                onNoUpdate.accept(data);
+                onNoUpdate.run();
             }
         });
     }

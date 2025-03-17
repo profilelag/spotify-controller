@@ -9,12 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class MediaConfig {
-    private static String clientId = "";
-    private static String clientSecret = "";
-    private static String accessToken = "";
-    private static String authToken = "";
-    private static String refreshToken = "";
-    private static long lastRefresh = 0;
+    private String clientId = "";
+    private String clientSecret = "";
+    private String accessToken = "";
+    private String authToken = "";
+    private String refreshToken = "";
+    private long lastRefresh = 0;
+    private boolean shouldShowToasts = true;
 
     public String clientId() {return clientId;}
     public void clientId(String value) {clientId = value; writeToFile();}
@@ -34,6 +35,9 @@ public class MediaConfig {
     public long lastRefresh() {return lastRefresh;}
     public void lastRefresh(long value) {lastRefresh = value; writeToFile();}
 
+    public boolean shouldShowToasts() {return shouldShowToasts;}
+    public void shouldShowToasts(boolean value) {shouldShowToasts = value; writeToFile();}
+
     public void generate() {
         Path configPath = FabricLoader.getInstance().getConfigDir().resolve("media.json");
         if (Files.exists(configPath)) {
@@ -46,6 +50,7 @@ public class MediaConfig {
                 authToken = config.get("authToken").getAsString();
                 refreshToken = config.get("refreshToken").getAsString();
                 lastRefresh = config.get("lastRefresh").getAsLong();
+                shouldShowToasts = config.get("shouldShowToasts").getAsBoolean();
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -63,6 +68,7 @@ public class MediaConfig {
         config.addProperty("authToken", authToken);
         config.addProperty("refreshToken", refreshToken);
         config.addProperty("lastRefresh", lastRefresh);
+        config.addProperty("shouldShowToasts", shouldShowToasts);
         try {
             Files.write(configPath, new Gson().toJson(config).getBytes(), delete ? StandardOpenOption.TRUNCATE_EXISTING : StandardOpenOption.CREATE_NEW);
         }catch (Exception e) {

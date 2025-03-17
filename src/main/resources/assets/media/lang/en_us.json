@@ -18,6 +18,11 @@
 
   "ui.media.loading": "Loading...",
 
+  "ui.media.premium_required.title": "Premium Required",
+  "ui.media.premium_required.message": "Premium is required. This is Spotify's built-in limitation",
+
+  "ui.media.show_toast": "Show toast notifications when song changes",
+
   "key.media.general": "Open Config / Controller",
 
   "modmenu.nameTranslation.media": "Spotify Controller",
