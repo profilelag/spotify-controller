@@ -1,14 +1,21 @@
 package com.tiji.media;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.*;
 import net.minecraft.client.MinecraftClient;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.concurrent.Executor;
 
 public class WebGuideServer {
     public static HttpServer server;
@@ -17,7 +24,7 @@ public class WebGuideServer {
         try {
             server = HttpServer.create(new InetSocketAddress(25566), 0);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Media.LOGGER.error("Unexpected error: {}", e);
         }
     }
 

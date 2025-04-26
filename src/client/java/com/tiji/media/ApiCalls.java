@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 
 public class ApiCalls {
     public static void convertAccessToken(String accessToken) {
-        call("https://accounts.spotify.com/api/token?grant_type=authorization_code&redirect_uri=http://localhost:25566/callback&code=" + accessToken,
+        call("https://accounts.spotify.com/api/token?grant_type=authorization_code&code=" + accessToken + "&redirect_uri=http://127.0.0.7:25566/callback",
                 getAuthorizationHeader(),
                 "application/x-www-form-urlencoded",
                 body -> {
@@ -27,6 +27,8 @@ public class ApiCalls {
                     MediaClient.CONFIG.authToken(data.get("access_token").getAsString());
                     MediaClient.CONFIG.refreshToken(data.get("refresh_token").getAsString());
                     MediaClient.CONFIG.lastRefresh(System.currentTimeMillis());
+
+                    Media.LOGGER.info("Successfully converted access token");
                 }, "POST");
     }
     public static void refreshAccessToken() {
