@@ -78,8 +78,8 @@ public class SongDataExtractor {
             ByteArrayInputStream imageStream = new ByteArrayInputStream(outputStream.toByteArray());
 
             NativeImage image = NativeImage.read(imageStream);
-            MinecraftClient.getInstance().getTextureManager().registerTexture(id,
-                    new NativeImageBackedTexture(image));
+            MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().getTextureManager().registerTexture(id,
+                    new NativeImageBackedTexture(id::toString, image)));
 
             return id;
         }catch (IOException e) {
