@@ -30,8 +30,7 @@ public class WebGuideServer {
 
     public static void start() throws IOException {
         server.createContext("/callback", new callbackHandler());
-        server.createContext("/secret", new secretHandler());
-        server.createContext("/id", new idHandler());
+        server.createContext("/config", new configHandler());
         server.createContext("/", new rootHandler());
 
         server.setExecutor(null);
@@ -103,28 +102,31 @@ public class WebGuideServer {
             WebGuideServer.stop();
         }
     }
-    private static class secretHandler implements HttpHandler {
+    private static class configHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            String Code = exchange.getRequestURI().getQuery().split("=")[1];
-            MediaClient.CONFIG.clientSecret(Code);
+            String[] Queries = exchange.getRequestURI().getQuery().split("&");
+            String Id = "";
+            String Secret = "";
 
-            Media.LOGGER.info("Client Secret Received");
-
-            String response = "Received";
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        }
-    }
-    private static class idHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            String Code = exchange.getRequestURI().getQuery().split("=")[1];
-            MediaClient.CONFIG.clientId(Code);
+            for(String pair : Queries) {
+                String[] kv = pair.split("=");
+                if(kv.length != 2) continue;
+                if(kv[0].equalsIgnoreCase("id")) Id = kv[1];
+                else if(kv[0].equalsIgnoreCase("secret")) Secret = kv[1];
+            }
+            if(Id.length()==0 || Secret.length()==0) {
+                String response = "Bad Request";
+                exchange.sendResponseHeaders(400, response.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+                return;
+            }
 
             Media.LOGGER.info("Client ID Received");
+            MediaClient.CONFIG.clientId(Id);
+            MediaClient.CONFIG.clientSecret(Secret);
 
             String response = "Received";
             exchange.sendResponseHeaders(200, response.length());
