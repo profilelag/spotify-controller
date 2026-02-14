@@ -1,18 +1,41 @@
 # Spotify Controller
+Control your spotify playback without alt-tabbing
 
-[![Modrinth](https://img.shields.io/badge/dynamic/json?labelColor=black&color=grey&label=&suffix=%20downloads&query=downloads&url=https://api.modrinth.com/v2/project/spotify-controller&style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAJPUExURQAAABvZahWnUha1WAYzGQlHIxvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZahvZav///9ScwmYAAADDdFJOUwAAAAAAAA8zW3uOYwIBK3rB6Pn+ml18KiGL5HEDquOIH07R/UzKz2zu+uLHIibtafWkVCMNBRqg7/RQuT8EQbvT+5ETDBSU/NAgCSdZlcQKii7mtxJY5fF/7D1SRkB+EcWh4UilOOtPMdTCR1PqN969vmGDCw7G4DSSsAcGHrSPr3bds5CEwDKoXumcZdwcG4KmjayX32A79pjOqRjIFoXynVYVgPi6qxDnL78p2obVJFquNbGZCPdyvHPZ1yhuh8s+iRzcsrEAAAABYktHRMQUDBvhAAAAB3RJTUUH5wQXDwgZWDUtiQAAAqRJREFUOMttU/k7lFEU/k4L4hsxtNAnhRgiJZOiSfbI2oJpmRFCi2kV0aaNVLTIEpVISmnf97r/WO+534yZnqfzw73vOe+559xz7rmKIoVYvLx95vj6qUSqVBW3sGrwnxsQaAwSwcDz5i9g0wxPfmFIqJCyiEgLE4vDl7iD8PGlETotIqOQahlAdJTLA5sWY5JsbNzysHiihEBWViRqRDOlgyFmJVtMq5JWJ5vhvyZlLevrEmUILKl8PihtvYWcYt6QLmNwFjjEb4SSkZnlZLO5yJzcPBg35bODwZfPZxYwWbC5sKjYzwBUkssxSg1wKNsCtHUb89vTy3GwopBxDmcJ9YdDJYB1B9t2WmUtcbtkqt18Mxsp9irsezS2VEu+uka/mqUWSrFd2VsnhLEetoZ9TFv3HwCexdUdjBWi0aH4YTuEvtoPM3/EO1nnuTpEjD2qHIM54DhR0wmA5hZySzIntyknsbZyi8IB0tp07tRpBDKfgeWsdDjHDlFGRIjnl3O0t573gcMFUBeVS1gvlxB1dOZxv0pIu9IF01UDZRdjr1SuZQhxvbvnRrmsMePmrdsrGPRaKP8OLtmn9KM7A4N3xb8yNExUb5RlZt2btpZbXajzPoYkBaDKrtADp3HkYdloo56ndgx37UcHxSP0tIWBGH9cg1nx6TJFTNhS7eCfcA1PJ+GgDbLDs2GuX3V05Ohj0xYSBGumyq/yfApw4EWTRxPJqxQvIF6+ks9Gr0d4nN+8Nbhoi+NdJEwVSc6hVNvHOUvg+5qeDxoP3GQz6x8/qXLuZ6Op7SPy+gNTnydSELabk1Z8Mbs/hlr4dbobfUgxJMS3UdXza9H33jqnA3/OH41FCZ7/l7HW8vOXiWc9GvPf06D953/T2O/EP8HBNtcH0Zm/lqFNUgTAex4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjMtMDQtMjNUMTU6MDg6MjQrMDA6MDAE5dOaAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIzLTA0LTIzVDE1OjA4OjI0KzAwOjAwdbhrJgAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyMy0wNC0yM1QxNTowODoyNSswMDowMITaQU0AAAAASUVORK5CYII=)](https://modrinth.com/mod/spotify-controller)
+If you found bugs, please report to issue tracker on github!
 
-Spotify in Minecraft
+### Maintaince only
+I won't be adding new features to this mod. This does not mean that I will leave this mod broken if there is bugs, but just that there will not be any new feature. I will still try my best to help you when there is an issue, but feature requests will not be fulfilled. This is because I don't feel motovated to develop anymore with Spotify actively trying to kill this kind of programs. There is unstable features on Github that didn't make it to release, people who wants them can build them themselves.
 
-Requires [LibGui](https://github.com/CottonMC/LibGui/releases)
+### Spotify Developer Terms Update
+Starting from Feb 11, all new users needs to have Premium subscription. From March 9, all free account's connections are disbanded and won't work anymore. For people with premium, you won't be affected at all. [Read more here.](https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security)
 
-## How to set up
+### Features
+- View what you are playing
+- Resume / Pause your song
+- Skip to next song
+- Listen to previous song (again)
+- Seek to wanted position
+- Search for a song
 
-Follow [official wiki on creating app](https://developer.spotify.com/documentation/web-api/concepts/apps). Set `Redirect URI` to `http://127.0.0.1:25566/callback`.
-Press Z to start setting up. On the bottom of the page, there are input for Client ID and Client Secret. Paste Client ID and Client Secret you got from creating app
-into input. Sign in normally. After this, you may press Z again to control your playback.
+### Applied Picture
 
-## License
+![In game screenshot](https://cdn.modrinth.com/data/cached_images/0cd0a61c28fd4b1f6f4c44b4b5cd631c04e5319d_0.webp)
+
+### How to set up
+
+Follow [official wiki on creating app](https://developer.spotify.com/documentation/web-api/concepts/apps). Set `Redirect URI` to `http://127.0.0.1:25566/callback`. Press Z to show pop up with button that redirects you to setup page. On the bottom of the page, there are inputs for Client ID and Client Secret. Paste Client ID and Client Secret you got from creating app into input. Sign in normally. After this, you may press Z again to control your playback.
+
+### Future plans
+
+- Ability to view lyrics
+- Ability to view queue
+- ~~Easier setup~~ *(Impossible since April 15, 2025, [see blog post from Spotify](https://developer.spotify.com/blog/2025-04-15-updating-the-criteria-for-web-api-extended-access))*
+- [#28: Volume control](https://github.com/IamTiji/spotify-controller/issues/28)
+- [#23: System Media for free account or pre-setup](https://github.com/IamTiji/spotify-controller/issues/23)
+- [#14: Mini Player](https://github.com/IamTiji/spotify-controller/issues/14)
+- [#14: Like and dislikes](https://github.com/IamTiji/spotify-controller/issues/14)
+
+### License
 
 The project code and asset has different license. 
 
