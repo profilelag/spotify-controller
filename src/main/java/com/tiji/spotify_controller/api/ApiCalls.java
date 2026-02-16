@@ -165,24 +165,24 @@ public class ApiCalls {
     private static final int LIKE_CACHE_LIFETIME = 15000;
 
     public static void isSongLiked(String trackId, Consumer<Boolean> consumer) {
-        if (System.currentTimeMillis() - cachedLikeStatusTime < LIKE_CACHE_LIFETIME &&
-                cachedSongId != null &&
-                cachedSongId.equals(trackId)) {
-            consumer.accept(cachedLikeStatus);
-        }
-
-        call("https://api.spotify.com/v1/me/tracks/contains?ids=" + trackId,
-                getAuthorizationCode(),
-                null,
-                body -> {
-                    cachedLikeStatus = new Gson().fromJson(body.body(), JsonArray.class).get(0).getAsBoolean();
-                    cachedSongId = trackId;
-                    cachedLikeStatusTime = System.currentTimeMillis();
-
-                    consumer.accept(cachedLikeStatus);
-                }
-                , "GET"
-        );
+        //if (System.currentTimeMillis() - cachedLikeStatusTime < LIKE_CACHE_LIFETIME &&
+        //        cachedSongId != null &&
+        //        cachedSongId.equals(trackId)) {
+        //    consumer.accept(cachedLikeStatus);
+        //}
+        //
+        //call("https://api.spotify.com/v1/me/tracks/contains?ids=" + trackId,
+        //        getAuthorizationCode(),
+        //        null,
+        //        body -> {
+        //            cachedLikeStatus = new Gson().fromJson(body.body(), JsonArray.class).get(0).getAsBoolean();
+        //            cachedSongId = trackId;
+        //            cachedLikeStatusTime = System.currentTimeMillis();
+        //
+        //            consumer.accept(cachedLikeStatus);
+        //        }
+        //        , "GET"
+        //);
     }
     public static void toggleLikeSong(String trackId, boolean state) {
         call("https://api.spotify.com/v1/me/tracks?ids=" + trackId,
