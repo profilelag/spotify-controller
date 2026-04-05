@@ -86,7 +86,7 @@ public class Main implements ClientModInitializer {
 					client.setScreen(nowPlayingScreen);
 				}
 			}
-			if (!isNotSetup() && tickCount % 10 == 0) {
+			if (!isNotSetup() && tickCount % 10 == 0 && currentlyPlaying != null) {
                 ImageUsageTracker.runGC();
 				if (nowPlayingScreen != null) {
 					SongDataExtractor.reloadData(false, nowPlayingScreen::updateStatus, nowPlayingScreen::updateNowPlaying, () -> {
