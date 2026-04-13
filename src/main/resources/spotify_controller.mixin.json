@@ -1,0 +1,6 @@
+{
+  "package" : "com.tiji.spotify_controller.mixin",
+  "mixins": [
+    "CallbackInject"
+  ]
+}

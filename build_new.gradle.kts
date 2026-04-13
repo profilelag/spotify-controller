@@ -54,7 +54,7 @@ dependencies {
     implementation(fabricApi.module("fabric-lifecycle-events-v1", project.property("fabric_version") as String))
     implementation(fabricApi.module("fabric-resource-loader-v0",  project.property("fabric_version") as String))
     implementation(fabricApi.module("fabric-key-mapping-api-v1",  project.property("fabric_version") as String))
-    implementation(fabricApi.module("fabric-command-api-v2",      project.property("fabric_version") as String))
+    implementation(fabricApi.module("fabric-rendering-v1",        project.property("fabric_version") as String))
 
     implementation(project.property("essential.defaults.loom.fabric-loader")!! as String)
 

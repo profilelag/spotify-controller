@@ -16,6 +16,7 @@
   "icon": "assets/spotify_controller/icon.png",
   "environment": "client",
   "accessWidener" : "$accesswidener",
+  "mixins" : ["spotify_controller.mixin.json"],
   "entrypoints": {
     "client": [
       "com.tiji.spotify_controller.Main"

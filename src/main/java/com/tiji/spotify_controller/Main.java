@@ -6,7 +6,6 @@ import com.tiji.spotify_controller.api.SongData;
 import com.tiji.spotify_controller.api.SongDataExtractor;
 import com.tiji.spotify_controller.ui.NowPlayingScreen;
 import com.tiji.spotify_controller.ui.SetupScreen;
-import com.tiji.spotify_controller.util.ImageUsageTracker;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -17,7 +16,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
@@ -35,7 +33,8 @@ public class Main implements ClientModInitializer {
 			//$$ new KeyMapping("key.spotify_controller.general", GLFW.GLFW_KEY_Z, KeyMapping.Category.MISC);
 			//#endif
 
-	public static int tickCount = 0;
+	public static long lastUploadMs = 0;
+    public static final int UPDATE_INTERVAL_MS = 500;
 	public static NowPlayingScreen nowPlayingScreen = null;
 
     public static SongData currentlyPlaying;
@@ -75,45 +74,21 @@ public class Main implements ClientModInitializer {
                 SongDataExtractor.reloadData(true, () -> {}, () -> {}, () -> {});
             }
         });
-		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-			while (SETUP_KEY.consumeClick()) {
-				if (isNotSetup()) {
-					client.setScreen(new SetupScreen());
-				} else {
-					nowPlayingScreen = new NowPlayingScreen();
-					nowPlayingScreen.updateCoverImage();
-					nowPlayingScreen.updateNowPlaying();
-					client.setScreen(nowPlayingScreen);
-				}
-			}
-			if (!isNotSetup() && tickCount % 10 == 0 && currentlyPlaying != null) {
-                ImageUsageTracker.runGC();
-				if (nowPlayingScreen != null) {
-					SongDataExtractor.reloadData(false, nowPlayingScreen::updateStatus, nowPlayingScreen::updateNowPlaying, () -> {
-						nowPlayingScreen.updateCoverImage();
-						if (CONFIG.shouldShowToasts() && isStarted) {
-                            showNewSongToast();
-                        }
-					});
-				} else {
-					SongDataExtractor.reloadData(false, () -> {}, () -> {}, () -> {
-						if (CONFIG.shouldShowToasts() && isStarted) {
-                            showNewSongToast();
-                        }
-					});
-				}
-				if (CONFIG.lastRefresh() + 1.8e+6 < System.currentTimeMillis()) {
-					SpotifyApi.refreshAccessToken();
-				}
-			}
-			tickCount++;
-
-            if (!I18n.exists("ui.spotify_controller.unknown_artist")) return; // Locale isn't loaded yet
-            if (currentlyPlaying == null) currentlyPlaying = SongData.emptyData();
-		});
+        ClientTickEvents.END_CLIENT_TICK.register((client) -> {
+            while (SETUP_KEY.consumeClick()) {
+                if (isNotSetup()) {
+                    client.setScreen(new SetupScreen());
+                } else {
+                    nowPlayingScreen = new NowPlayingScreen();
+                    nowPlayingScreen.updateCoverImage();
+                    nowPlayingScreen.updateNowPlaying();
+                    client.setScreen(nowPlayingScreen);
+                }
+            }
+        });
 	}
 
-    private static void showNewSongToast() {
+    public static void showNewSongToast() {
         new SongToast(currentlyPlaying.coverImage, currentlyPlaying.artist, currentlyPlaying.title).show(Minecraft.getInstance().getToastManager());
     }
 

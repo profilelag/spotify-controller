@@ -3,24 +3,24 @@ package com.tiji.spotify_controller.ui;
 import com.tiji.spotify_controller.Main;
 import com.tiji.spotify_controller.util.SafeDrawer;
 import com.tiji.spotify_controller.util.ImageWithColor;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class BaseScreen extends SafeAbstractScreen {
-    protected float totalTime = 0f;
+    protected long startTime = Util.getMillis();
     protected int widgetsOffset = -100;
     protected static final int ANIMATION_AMOUNT = 100;
-    private static final float animationTime = 0.5f;
+    private static final int animationTime = 250;
 
     public BaseScreen(boolean animate) {
         super(Component.nullToEmpty(""));
 
         if (!animate) {
-            totalTime += animationTime;
+            startTime -= animationTime;
             widgetsOffset = 0;
         }
     }
@@ -31,8 +31,8 @@ public class BaseScreen extends SafeAbstractScreen {
         super.renderBackground(context, mouseX, mouseY, delta);
         //#endif
 
-        totalTime += delta / 10f;
-        float normalized = Math.min(totalTime, animationTime) / animationTime;
+        long totalTime = Util.getMillis() - startTime;
+        float normalized = (float) Math.min(totalTime, animationTime) / animationTime;
         int previousOffset = widgetsOffset;
 
         // Glow
