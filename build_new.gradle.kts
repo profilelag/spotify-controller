@@ -12,12 +12,19 @@ repositories {
 }
 
 plugins {
+    id("idea")
     id("java")
     id("maven-publish")
     id("gg.essential.defaults.java")
     //id("gg.essential.defaults")
     //id("gg.essential.defaults.loom")
     id("gg.essential.multi-version")
+}
+
+idea {
+    module {
+        generatedSourceDirs.add(file("build/preprocessed/main/java"))
+    }
 }
 
 val modVersion: String by project

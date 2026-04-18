@@ -16,6 +16,13 @@ plugins {
 
     id("gg.essential.multi-version.root") version "0.7.0-alpha.4"
     id("gg.essential.loom") version "1.7.35"
+    id("idea")
+}
+
+idea {
+    module {
+        generatedSourceDirs.add(file("build/preprocessed/main/java"))
+    }
 }
 
 preprocess.strictExtraMappings.set(true)
