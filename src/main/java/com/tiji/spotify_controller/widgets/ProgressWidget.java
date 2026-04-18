@@ -39,7 +39,7 @@ public class ProgressWidget extends SafeAbstractWidget {
     @Override
     public void safeRender(GuiGraphics context, int mouseX, int mouseY, float delta) {
         if (dragging) {
-            value = getValue(mouseX - getX());
+            setValue(getValue(mouseX - getX()), true);
         }
 
         int thumbPosition = getThumbPosition();
@@ -60,7 +60,13 @@ public class ProgressWidget extends SafeAbstractWidget {
     }
 
     public void setValue(float value) {
-        this.value = Math.max(0, Math.min(1, value));
+        setValue(value, false);
+    }
+
+    private void setValue(float value, boolean force) {
+        if (dragging && !force) return;
+
+        this.value = Math.clamp(value, 0f, 1f);
     }
 
     @Override
