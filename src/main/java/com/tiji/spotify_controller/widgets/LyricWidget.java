@@ -33,7 +33,7 @@ public class LyricWidget extends SafeAbstractWidget {
         int y = getY();
         boolean isPast = false;
         for (int i = 0; i < lyric.lines.size(); i++) {
-            if (lyric.timestamps.get(i) >= Main.playbackState.progress) isPast = true;
+            if (lyric.timestamps.get(i) >= Main.playbackState.progressMs.getInterpolatedTime()) isPast = true;
 
             SafeDrawer.drawString(context, font, lyric.lines.get(i), getX(), y, isPast ? 0x77FFFFFF : 0xFFFFFFFF, false);
             y += font.lineHeight + LYRIC_MARGIN;

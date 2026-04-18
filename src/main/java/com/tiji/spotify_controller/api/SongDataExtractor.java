@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.tiji.spotify_controller.Main;
 import com.tiji.spotify_controller.ui.Icons;
 import com.tiji.spotify_controller.util.ImageWithColor;
+import com.tiji.spotify_controller.util.InterpolatedTime;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,13 +46,13 @@ public class SongDataExtractor {
         );
     }
 
-    public static double getDuration(JsonObject trackObj) {
+    public static double getProgressNorm(JsonObject trackObj) {
         return trackObj.get("progress_ms").getAsDouble()/
                 trackObj.getAsJsonObject("item")
                         .get("duration_ms").getAsDouble();
     }
 
-    public static int getProgress(JsonObject trackObj) {
+    public static int getProgressMs(JsonObject trackObj) {
         return trackObj.get("progress_ms").getAsInt();
     }
 
@@ -64,17 +65,6 @@ public class SongDataExtractor {
         Integer seconds_duration = duration % 60;
 
         return String.format("%02d:%02d", minutes_duration, seconds_duration);
-    }
-
-    public static String getProgressLabel(JsonObject trackObj) {
-        int progress = trackObj.get("progress_ms").getAsInt();
-
-        progress /= 1000;
-
-        Integer minutes_progress = progress / 60;
-        Integer seconds_progress = progress % 60;
-
-        return String.format("%02d:%02d", minutes_progress, seconds_progress);
     }
 
     public static boolean isPlaying(JsonObject trackObj) {
@@ -108,12 +98,12 @@ public class SongDataExtractor {
                 Main.playbackState.canShuffle = false;
                 return;
             }
-            boolean isSongDifferent = !getId(data.getAsJsonObject("item")).equals(Main.currentlyPlaying.Id);
+            JsonObject song = data.getAsJsonObject("item");
+            boolean isSongDifferent = !getId(song).equals(Main.currentlyPlaying.Id);
 
-            Main.playbackState.progressLabel = getProgressLabel(data);
-            Main.playbackState.progress = getProgress(data);
+            Main.playbackState.progressMs = new InterpolatedTime(getProgressMs(data));
             Main.playbackState.isPlaying = isPlaying(data);
-            Main.playbackState.progressValue = getDuration(data);
+            Main.playbackState.durationMs = getMaxDuration(song);
             Main.playbackState.repeat = getRepeatState(data);
             Main.playbackState.shuffle = getShuffleState(data);
 
@@ -126,7 +116,7 @@ public class SongDataExtractor {
             Main.playbackState.canSeek = !disallows.has("seeking");
 
             if (isSongDifferent || forceFullReload) {
-                Main.currentlyPlaying = getDataFor(data.getAsJsonObject("item"), onImageLoad);
+                Main.currentlyPlaying = getDataFor(song, onImageLoad);
             }
 
             SpotifyApi.isSongLiked(Main.currentlyPlaying.Id, isLiked ->
@@ -155,7 +145,6 @@ public class SongDataExtractor {
         song.songURI = getSpotifyLink(data);
 
         if (!song.coverImage.getImage().getPath().equals("ui/nothing.png")) {
-            //MinecraftClient.getInstance().getTextureManager().destroyTexture(SongData.coverImage);        //Deleted line as they are used on toasts. Will be re-visited (someday...)
             song.coverImage = new ImageWithColor(0xffffffff, ResourceLocation.fromNamespaceAndPath(Main.MOD_ID, "ui/nothing.png"));
         }
 

@@ -106,7 +106,7 @@ public class NowPlayingScreen extends BaseScreen {
         // Progress bar
         progressBar = new ProgressWidget(
                 MARGIN + widgetsOffset, (int) (MARGIN * 1.5 + IMAGE_SIZE), PLAYBACK_SIZE,
-                (float) Main.playbackState.progressValue,
+                (float) Main.playbackState.getProgressNorm(),
                 (v) -> SpotifyApi.setPlaybackLoc((int) (Main.currentlyPlaying.duration * v))
         );
         addRenderableWidget(progressBar);
@@ -134,6 +134,11 @@ public class NowPlayingScreen extends BaseScreen {
     @Override
     public void safeRender(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.safeRender(context, mouseX, mouseY, delta);
+
+        progressBar.setValue((float) Main.playbackState.getProgressNorm());
+        playPauseButton.setLabel(Main.playbackState.isPlaying ? Icons.PAUSE : Icons.RESUME);
+        repeatButton.setLabel(RepeatMode.getAsText(Main.playbackState.repeat));
+        shuffleButton.setLabel(Main.playbackState.shuffle ? Icons.SHUFFLE_ON : Icons.SHUFFLE);
 
         // Playback info
         ImageWithColor cover = Main.currentlyPlaying.coverImage;
@@ -177,7 +182,7 @@ public class NowPlayingScreen extends BaseScreen {
         SafeDrawer.drawString(
                 context,
                 font,
-                Component.nullToEmpty(Main.playbackState.progressLabel),
+                Component.nullToEmpty(Main.playbackState.getProgressLabel()),
                 MARGIN + widgetsOffset,
                 MARGIN + PLAYBACK_CONTROL_Y + 35,
                 0xFFFFFFFF, false
@@ -201,12 +206,7 @@ public class NowPlayingScreen extends BaseScreen {
         Main.nowPlayingScreen = null;
     }
 
-    public void updateStatus() {
-        playPauseButton.setLabel(Main.playbackState.isPlaying ? Icons.PAUSE : Icons.RESUME);
-        progressBar.setValue((float) Main.playbackState.progressValue);
-        repeatButton.setLabel(RepeatMode.getAsText(Main.playbackState.repeat));
-        shuffleButton.setLabel(Main.playbackState.shuffle ? Icons.SHUFFLE_ON : Icons.SHUFFLE);
-    }
+    public void updateStatus() {}
     public void updateNowPlaying() {
         if (minecraft == null) return;
         if (minecraft.screen instanceof SecondaryBaseScreen subscreen) {

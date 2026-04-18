@@ -34,7 +34,7 @@ public class Main implements ClientModInitializer {
 			//#endif
 
 	public static long lastUploadMs = 0;
-    public static final int UPDATE_INTERVAL_MS = 500;
+    public static final int UPDATE_INTERVAL_MS = 5000;
 	public static NowPlayingScreen nowPlayingScreen = null;
 
     public static SongData currentlyPlaying;
