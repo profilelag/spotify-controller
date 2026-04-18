@@ -5,19 +5,34 @@ import com.tiji.spotify_controller.api.SongData;
 import com.tiji.spotify_controller.api.SongDataExtractor;
 import com.tiji.spotify_controller.api.SpotifyApi;
 import com.tiji.spotify_controller.util.ImageUsageTracker;
+import com.tiji.spotify_controller.util.RequestManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class CallbackInject {
+    @Unique private boolean requestSent = false;
+
     @Inject(method = "runTick", at = @At("TAIL"))
     public void inject(boolean renderLevel, CallbackInfo ci) {
-        if (!Main.isNotSetup() && (Util.getMillis() - Main.lastUploadMs) > Main.UPDATE_INTERVAL_MS && Main.currentlyPlaying != null) {
+        if (Main.currentlyPlaying != null &&
+                Main.playbackState.progressMs.getInterpolatedTime() > Main.currentlyPlaying.duration &&
+                !requestSent) {
+            RequestManager.putRequest(150);
+            requestSent = true;
+        } else {
+            requestSent = false;
+        }
+        boolean b = RequestManager.pollRequest();
+        if (!Main.isNotSetup() &&
+                ((Util.getMillis() - Main.lastUploadMs) > Main.UPDATE_INTERVAL_MS || b) &&
+                Main.currentlyPlaying != null) {
             Main.lastUploadMs = Util.getMillis();
             ImageUsageTracker.runGC();
             if (Main.nowPlayingScreen != null) {

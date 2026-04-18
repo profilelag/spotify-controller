@@ -101,8 +101,8 @@ public class SongDataExtractor {
             JsonObject song = data.getAsJsonObject("item");
             boolean isSongDifferent = !getId(song).equals(Main.currentlyPlaying.Id);
 
-            Main.playbackState.progressMs = new InterpolatedTime(getProgressMs(data));
             Main.playbackState.isPlaying = isPlaying(data);
+            Main.playbackState.progressMs = InterpolatedTime.optionalProgression(getProgressMs(data), Main.playbackState.isPlaying);
             Main.playbackState.durationMs = getMaxDuration(song);
             Main.playbackState.repeat = getRepeatState(data);
             Main.playbackState.shuffle = getShuffleState(data);

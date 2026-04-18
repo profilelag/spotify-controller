@@ -20,7 +20,7 @@ public class InterpolatedTime {
         this.startTime = startTime;
     }
 
-    public static InterpolatedTime nonProgressing(int time) {
+    public static InterpolatedTime nonProgressing(long time) {
         return new InterpolatedTime(time) {
             @Override
             public long getInterpolatedTime() {
@@ -31,5 +31,9 @@ public class InterpolatedTime {
 
     public static InterpolatedTime nonProgressing() {
         return nonProgressing(0);
+    }
+
+    public static InterpolatedTime optionalProgression(long time, boolean progressing) {
+        return progressing ? new InterpolatedTime(time) : nonProgressing(time);
     }
 }

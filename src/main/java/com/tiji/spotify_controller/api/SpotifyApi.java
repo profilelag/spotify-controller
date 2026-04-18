@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tiji.spotify_controller.Main;
+import com.tiji.spotify_controller.util.InterpolatedTime;
+import com.tiji.spotify_controller.util.RequestManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
@@ -108,19 +110,24 @@ public class SpotifyApi {
         API.call("https://api.spotify.com/v1/me/player/seek?position_ms=" + position_ms,
                 getAuthorizationCode(),
                 null,
-                body -> {},
+                unused -> {},
                 "PUT"
         );
+        Main.playbackState.progressMs = new InterpolatedTime(position_ms);
+        RequestManager.putRequest();
     }
 
     public static void playPause(boolean state) {
         String uri;
         if (state) {
             uri = "https://api.spotify.com/v1/me/player/play";
-        }else {
+        } else {
             uri = "https://api.spotify.com/v1/me/player/pause";
         }
-        API.call(uri, getAuthorizationCode(), null, body -> {}, "PUT");
+        API.call(uri, getAuthorizationCode(), null, unused -> {}, "PUT");
+        Main.playbackState.isPlaying = state;
+        Main.playbackState.progressMs = InterpolatedTime.optionalProgression(Main.playbackState.progressMs.getInterpolatedTime(), state);
+        RequestManager.putRequest();
     }
 
     public static void nextTrack() {
@@ -128,7 +135,8 @@ public class SpotifyApi {
             Main.showNotAllowedToast();
             return;
         }
-        API.call("https://api.spotify.com/v1/me/player/next", getAuthorizationCode(), null, body -> {}, "POST");
+        API.call("https://api.spotify.com/v1/me/player/next", getAuthorizationCode(), null, unused -> {}, "POST");
+        RequestManager.putRequest();
     }
 
     public static void previousTrack() {
@@ -136,7 +144,8 @@ public class SpotifyApi {
             Main.showNotAllowedToast();
             return;
         }
-        API.call("https://api.spotify.com/v1/me/player/previous", getAuthorizationCode(), null, body -> {}, "POST");
+        API.call("https://api.spotify.com/v1/me/player/previous", getAuthorizationCode(), null, unused -> {}, "POST");
+        RequestManager.putRequest();
     }
 
     public static void getUserName(Consumer<String> consumer) {
@@ -161,9 +170,11 @@ public class SpotifyApi {
         API.call("https://api.spotify.com/v1/me/player/shuffle?state=" + (state ? "true" : "false"),
                 getAuthorizationCode(),
                 null,
-                body -> {},
+                unused -> {},
                 "PUT"
         );
+        Main.playbackState.shuffle = state;
+        RequestManager.putRequest();
     }
 
     public static void setRepeat(String state) {
@@ -174,9 +185,11 @@ public class SpotifyApi {
         API.call("https://api.spotify.com/v1/me/player/repeat?state=" + state,
                 getAuthorizationCode(),
                 null,
-                body -> {},
+                unused -> {},
                 "PUT"
         );
+        Main.playbackState.repeat = state;
+        RequestManager.putRequest();
     }
 
     private static boolean cachedLikeStatus;
@@ -210,7 +223,7 @@ public class SpotifyApi {
         API.call("https://api.spotify.com/v1/me/tracks?ids=" + trackId,
                 getAuthorizationCode(),
                 null,
-                body -> {},
+                unused -> {},
                 state ? "PUT" : "DELETE"
         );
     }
@@ -230,7 +243,7 @@ public class SpotifyApi {
     public static void setPlayingSong(String trackId) {
         API.call("https://api.spotify.com/v1/me/player/play",
                 getAuthorizationCode(),
-                body -> {},
+                unused -> {},
                 "PUT",
                 "{\"uris\": [\"spotify:track:" + trackId + "\"]}"
         );
@@ -240,7 +253,7 @@ public class SpotifyApi {
         API.call("https://api.spotify.com/v1/me/player/queue?uri=spotify:track:" + trackId,
                 getAuthorizationCode(),
                 null,
-                body -> {},
+                unused -> {},
                 "POST"
         );
     }
