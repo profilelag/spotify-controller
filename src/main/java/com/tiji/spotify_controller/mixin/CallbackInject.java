@@ -17,21 +17,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class CallbackInject {
-    @Unique private boolean requestSent = false;
+    @Unique private static boolean requestSent = false;
 
     @Inject(method = "runTick", at = @At("TAIL"))
     public void inject(boolean renderLevel, CallbackInfo ci) {
         if (Main.currentlyPlaying != null &&
-                Main.playbackState.progressMs.getInterpolatedTime() > Main.currentlyPlaying.duration &&
-                !requestSent) {
-            RequestManager.putRequest(150);
-            requestSent = true;
+                Main.playbackState.progressMs.getInterpolatedTime() > Main.currentlyPlaying.duration) {
+            if (!requestSent) {
+                RequestManager.putRequest(150);
+                requestSent = true;
+            }
         } else {
             requestSent = false;
         }
-        boolean b = RequestManager.pollRequest();
         if (!Main.isNotSetup() &&
-                ((Util.getMillis() - Main.lastUploadMs) > Main.UPDATE_INTERVAL_MS || b) &&
+                ((Util.getMillis() - Main.lastUploadMs) > Main.UPDATE_INTERVAL_MS || RequestManager.pollRequest()) &&
                 Main.currentlyPlaying != null) {
             Main.lastUploadMs = Util.getMillis();
             ImageUsageTracker.runGC();
