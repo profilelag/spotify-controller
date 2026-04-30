@@ -17,6 +17,8 @@ public class PlaybackState {
     public boolean canSkip = false;
     public boolean canGoBack = false;
     public boolean canSeek = false;
+    public boolean supportsVolume = false;
+    public int     volumePercent = 0;
 
     public double getProgressNorm() {
         return (double) progressMs.getInterpolatedTime() / durationMs;
