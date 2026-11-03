@@ -28,6 +28,7 @@ public class NowPlayingScreen extends BaseScreen {
 
     private BorderlessButtonWidget playPauseButton;
     private ProgressWidget progressBar;
+    private ProgressWidget volumeBar;
     private BorderlessButtonWidget repeatButton;
     private BorderlessButtonWidget shuffleButton;
 
@@ -111,6 +112,17 @@ public class NowPlayingScreen extends BaseScreen {
         );
         addRenderableWidget(progressBar);
 
+        // Volume bar (half the width of the playback progress bar) with an icon to its left
+        int volumeBarY = (int) (MARGIN * 1.5 + IMAGE_SIZE) + 20;
+        int volumeBarWidth = PLAYBACK_SIZE / 2;
+        int volumeBarX = MARGIN + widgetsOffset + 12; // leave space for volume icon
+        volumeBar = new ProgressWidget(
+                volumeBarX, volumeBarY, volumeBarWidth,
+                (float) Main.playbackState.volumePercent / 100f,
+                (v) -> SpotifyApi.setVolume((int) (v * 100))
+        );
+        addRenderableWidget(volumeBar);
+
         // Subscreen button
         y = height - MARGIN - SUBSCREEN_BUTTONS_HEIGHT;
         for (Map.Entry<Component, Class<? extends SecondaryBaseScreen>> entry : SUBSCREENS.entrySet()) {
@@ -136,6 +148,10 @@ public class NowPlayingScreen extends BaseScreen {
         super.safeRender(context, mouseX, mouseY, delta);
 
         progressBar.setValue((float) Main.playbackState.getProgressNorm());
+                // update volume bar value and draw volume icon
+                if (volumeBar != null) {
+                        volumeBar.setValue((float) Main.playbackState.volumePercent / 100f);
+                }
         playPauseButton.setLabel(Main.playbackState.isPlaying ? Icons.PAUSE : Icons.RESUME);
         repeatButton.setLabel(RepeatMode.getAsText(Main.playbackState.repeat));
         shuffleButton.setLabel(Main.playbackState.shuffle ? Icons.SHUFFLE_ON : Icons.SHUFFLE);
@@ -196,6 +212,17 @@ public class NowPlayingScreen extends BaseScreen {
                 MARGIN + PLAYBACK_CONTROL_Y + 35,
                 0xFFFFFFFF, false
         ); // duration label
+
+        // draw volume icon to the left of the volume bar
+        int volumeBarY = (int) (MARGIN * 1.5 + IMAGE_SIZE) + 20;
+        SafeDrawer.drawString(
+                context,
+                font,
+                Icons.VOLUME,
+                MARGIN + widgetsOffset,
+                volumeBarY + 2,
+                0xFFFFFFFF, false
+        );
 
         drawFullName(context, mouseX, mouseY, nextX, nextX);
     }

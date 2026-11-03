@@ -71,6 +71,14 @@ public class SongDataExtractor {
         return trackObj.get("is_playing").getAsBoolean();
     }
 
+    public static int getCurrentVolume(JsonObject trackObj) {
+        return trackObj.getAsJsonObject("device").get("volume_percent").getAsInt();
+    }
+
+    public static boolean getSupportsVolume(JsonObject trackObj) {
+        return trackObj.getAsJsonObject("device").get("supports_volume").getAsBoolean();
+    }
+
     public static int getMaxDuration(JsonObject trackObj) {
         return trackObj.get("duration_ms").getAsInt();
     }
@@ -96,6 +104,8 @@ public class SongDataExtractor {
                 Main.playbackState.canSeek = false;
                 Main.playbackState.canSkip = false;
                 Main.playbackState.canShuffle = false;
+                Main.playbackState.supportsVolume = false;
+                Main.playbackState.volumePercent = 0;
                 return;
             }
             JsonObject song = data.getAsJsonObject("item");
@@ -106,6 +116,8 @@ public class SongDataExtractor {
             Main.playbackState.durationMs = getMaxDuration(song);
             Main.playbackState.repeat = getRepeatState(data);
             Main.playbackState.shuffle = getShuffleState(data);
+            Main.playbackState.volumePercent = getCurrentVolume(data);
+            Main.playbackState.supportsVolume = getSupportsVolume(data);
 
             JsonObject disallows = data.getAsJsonObject("actions").getAsJsonObject("disallows");
             Main.playbackState.canShuffle = !disallows.has("toggling_shuffle");

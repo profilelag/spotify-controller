@@ -192,6 +192,21 @@ public class SpotifyApi {
         RequestManager.putRequest();
     }
 
+    public static void setVolume(int newVolume) {
+        if (!Main.playbackState.supportsVolume) {
+            Main.showNotAllowedToast();
+            return;
+        }
+        API.call("https://api.spotify.com/v1/me/player/volume?volume_percent=" + newVolume,
+                getAuthorizationCode(),
+                null,
+                unused -> {},
+                "PUT"
+        );
+        Main.playbackState.volumePercent = newVolume;
+        RequestManager.putRequest();
+    }
+
     private static boolean cachedLikeStatus;
     private static String cachedSongId;
     private static long cachedLikeStatusTime;
